@@ -1,5 +1,5 @@
-- name: "roles demo"
+- name: "Build EC2 instances and create route53 record"
   hosts: local
   connection: local
   roles:
-    - demo
+    - ec2_build
