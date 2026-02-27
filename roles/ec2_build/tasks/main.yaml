@@ -1,46 +1,11 @@
-  - name: "launch ec2 instance"
-    amazon.aws.ec2_instance:
-      name: "{{ item }}-{{ env }}" # mongodb-dev
-      security_group: "{{ security_group }}"
-      instance_type: "{{ instance_type }}"
-      image_id: "{{ ami_id }}"
-      wait: true
-      region: "{{ region }}"
-      state: running
-      tags: "{{ common_tags }}"
-    loop: "{{ instances }}"
-    register: ec2_output
-    when: action == "create"
-  
-  - name: "Display the output of ec2 instance id and public & private ip address"
-    ansible.builtin.debug:
-       msg: "Instance ID: {{ ec2_output.instances[0].instance_id }}, Public IP: {{ ec2_output.instances[0].public_ip_address }}, Private IP: {{ ec2_output.instances[0].private_ip_address }}"
-
-  
-  # this below task is for private ip address
-  - name: "Create the route53 record for the ec2 instance"
-    amazon.aws.route53:
-      state: present
-      zone: "{{ zone_name }}"
-      record: "{{ item.item }}-{{ env }}.{{ zone_name }}" # mongodb-dev.rkak87.online (FQDN format)
-      type: A
-      ttl: 1
-      wait: false
-      overwrite: true
-      value: "{{ item.instances[0].private_ip_address }}"
-    loop: "{{ ec2_output.results }}"
-    when: action == "create"
-  
-  # this below task is for public ip address
-  - name: "Create the route53 record for the ec2 instance"
-    amazon.aws.route53:
-      state: present
-      zone: "{{ zone_name }}"
-      record: "webapp-{{ env }}.{{ zone_name }}" # webapp-dev.rkak87.online (FQDN format)
-      type: A
-      ttl: 1
-      wait: false
-      overwrite: true
-      value: "{{ item.instances[0].public_ip_address }}"
-    loop: "{{ ec2_output.results }}"
-    when: item.item == "frontend"
+- name: "Build EC2 instances and route 53 records"
+  amazon.aws.ec2_instance:
+    name: "{{ item }}-{{ env }}"
+    image_id: "{{ image_id }}"
+    instance_type: "{{ instance_type }}"
+    region: "{{ region }}"
+    security_group: "{{ security_group }}"
+    tags: "{{ common_tags }}"
+  loop: "{{ instances }}"
+  register: ec2_output
+  when: action == "create"

@@ -1,18 +1,14 @@
-security_group: ["sg-0e3e5d0160ba94b0b"]
 region: "us-east-1"
-ami_id: "ami-0220d79f3f480ecf5"
+security_group: ["sg-0e3e5d0160ba94b0b"]
+image_id: "ami-0220d79f3f480ecf5"
 instance_type: "t3.micro"
-action : "create"
+env: "dev"
 instances:
   - "mongodb"
   - "catalogue"
-  - "redis"
-  - "user"
-  - "cart"
-env: "dev"
 zone_name: "rkak87.online"
+action: "create"
 common_tags:
-  "Project": "roboshop"
-  "Name": "{{ item }}-{{ env }}"
-  "Owner": "ansible"
-  "Environment": "{{ env }}"
+  owner: ansible
+  project: roboshop
+  environment: "{{ env }}"
