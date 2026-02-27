@@ -9,6 +9,6 @@ instances:
 zone_name: "rkak87.online"
 action: "create"
 common_tags:
-  owner: ansible
-  project: roboshop
-  environment: "{{ env }}"
+  Owner: ansible
+  Project: roboshop
+  Environment: "{{ env }}"
