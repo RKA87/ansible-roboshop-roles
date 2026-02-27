@@ -70,6 +70,7 @@
 - name: "Terminate EC2 instances"
   amazon.aws.ec2_instance:
     state: absent
+    wait: false
     name: "{{ item }}-{{ env }}"
     region: "{{ region }}"
   loop: "{{ instances }}"
