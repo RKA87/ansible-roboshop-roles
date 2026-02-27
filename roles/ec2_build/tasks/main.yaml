@@ -13,3 +13,64 @@
 - name: "Print the EC2 Instance Output"
   ansible.builtin.debug:
     var: ec2_output
+
+# Create Route 53 Private IP Records
+- name: " Create Route 53 Private IP Records for EC2 instances "
+  amazon.aws.route53:
+    state: present
+    zone: "{{ zone_name }}"
+    record: "{{ item.item}}-{{ env }}.{{ zone_name }}" #mongodb-dev.rkak87.online
+    value: "{{ item.instances[0].private_ip_address }}"
+    type: A
+    ttl: 300
+    wait: false
+    overwrite: true
+  loop: "{{ ec2_output.results }}"
+  when: action == "create"
+
+# Create Route 53 Public IP Records
+- name: " Create Route 53 Public IP Records for EC2 instances "
+  amazon.aws.route53:
+    state: present
+    zone: "{{ zone_name }}"
+    record: "webapp-{{ env }}.{{ zone_name }}" #webapp-dev.rkak87.online
+    value: "{{ item.instances[0].public_ip_address }}"
+    type: A
+    ttl: 300
+    wait: false
+    overwrite: true
+  loop: "{{ ec2_output.results }}"
+  when: 
+  - action == "create"
+  - item.item == "frontend"
+
+  # Before deleting the instance, delete the route 53 private ip records using action: delete 
+- name: "Delete Route 53 Records for EC2 instances Private IP"
+  amazon.aws.route53:
+    state: absent
+    zone: "{{ zone_name }}"
+    record: "{{ item.item}}-{{ env }}.{{ zone_name }}" #mongodb-dev.rkak87.online
+    type: A
+  loop: "{{ ec2_output.results }}"
+  when: action == "delete"
+
+  # Before deleting the instance, delete the route 53 public ip records using action: delete 
+- name: "Delete Route 53 Records for EC2 instances for Public IP"
+  amazon.aws.route53:
+    state: absent
+    zone: "{{ zone_name }}"
+    record: "webapp-{{ env }}.{{ zone_name }}" #webapp-dev.rkak87.online
+    type: A
+  loop: "{{ ec2_output.results }}"
+  when: 
+  - action == "delete"
+  - item.item == "frontend"
+
+  #Now Delete the EC2 instance using action: delete
+- name: "Terminate EC2 instances"
+  amazon.aws.ec2_instance:
+    state: absent
+    name: "{{ item }}-{{ env }}"
+    region: "{{ region }}"
+  loop: "{{ instances }}"
+  when: action == "delete"
