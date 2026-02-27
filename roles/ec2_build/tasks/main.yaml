@@ -49,9 +49,9 @@
   amazon.aws.route53:
     state: absent
     zone: "{{ zone_name }}"
-    record: "{{ item.item}}-{{ env }}.{{ zone_name }}" #mongodb-dev.rkak87.online
+    record: "{{ item }}-{{ env }}.{{ zone_name }}" #mongodb-dev.rkak87.online
     type: A
-  loop: "{{ ec2_output.results }}"
+  loop: "{{ instances }}"
   when: action == "delete"
 
   # Before deleting the instance, delete the route 53 public ip records using action: delete 
@@ -61,10 +61,10 @@
     zone: "{{ zone_name }}"
     record: "webapp-{{ env }}.{{ zone_name }}" #webapp-dev.rkak87.online
     type: A
-  loop: "{{ ec2_output.results }}"
+  loop: "{{ instances }}"
   when: 
   - action == "delete"
-  - item.item == "frontend"
+  - item == "frontend"
 
   #Now Delete the EC2 instance using action: delete
 - name: "Terminate EC2 instances"
