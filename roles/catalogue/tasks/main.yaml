@@ -29,7 +29,7 @@
   register: catalogue_output
 
 - name: "Load products data"
-  ansible.builtin.command: mongosh --host "{{ MONGODB_HOST }}" </app/db/master-data.js
+  ansible.builtin.shell: mongosh --host "{{ MONGODB_HOST }}" </app/db/master-data.js
   when: catalogue_output.stdout | int < 0
 
 - name: "Start {{ component }} service"
