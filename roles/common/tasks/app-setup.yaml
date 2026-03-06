@@ -1,0 +1,38 @@
+- name: "create system user roboshop"
+  ansible.builtin.user:
+    name: roboshop
+    home: /app
+    shell: /sbin/nologin
+    comment: "Roboshop system User"
+    state: present
+
+# First delete the application directory
+- name: "Delete existing content of app directory"
+  ansible.builtin.file:
+    path: /app
+    state: absent
+
+# Now create the application directory
+- name: "Create application directory"
+  ansible.builtin.file:
+    path: /app
+    state: directory
+
+# First delete the zip file if already exists in temp location
+- name: "Delete existing zip file in temp location"
+  ansible.builtin.file:
+    path: /tmp/{{ component }}.zip
+    state: absent
+
+# Now download application code to created app directory
+- name: "Download {{ component }} application code"
+  ansible.builtin.get_url:
+    url: "https://roboshop-artifacts.s3.amazonaws.com/{{ component }}-v3.zip"
+    dest: /tmp/{{ component }}.zip
+
+# Now unzip the archive file from temp location to app directory
+- name: "Unzip {{ component }} application code"
+  ansible.builtin.unarchive:
+    src: /tmp/{{ component }}.zip
+    dest: /app
+    remote_src: yes

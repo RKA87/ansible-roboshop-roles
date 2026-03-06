@@ -22,7 +22,7 @@
     record: "{{ item.item}}-{{ env }}.{{ zone_name }}" #mongodb-dev.rkak87.online
     value: "{{ item.instances[0].private_ip_address }}"
     type: A
-    ttl: 300
+    ttl: 1
     wait: false
     overwrite: true
   loop: "{{ ec2_output.results }}"
@@ -36,7 +36,7 @@
     record: "webapp-{{ env }}.{{ zone_name }}" #webapp-dev.rkak87.online
     value: "{{ item.instances[0].public_ip_address }}"
     type: A
-    ttl: 300
+    ttl: 1
     wait: false
     overwrite: true
   loop: "{{ ec2_output.results }}"

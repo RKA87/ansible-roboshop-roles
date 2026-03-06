@@ -1,0 +1,9 @@
+- name: "Install and Configure the dependencies for Roboshop Instances"
+  hosts: "{{ component }}"
+  become: true
+  tasks:
+    - name: "Display the message"
+      ansible.builtin.debug:
+        msg: "Installing and Configuring the dependencies for {{ component }}"
+  roles:
+    - "{{ component }}"
