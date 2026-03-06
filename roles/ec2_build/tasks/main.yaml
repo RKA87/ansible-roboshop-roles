@@ -6,9 +6,10 @@
     region: "{{ region }}"
     security_groups: "{{ sg_id }}"
     tags: "{{ common_tags }}"
-  loop: "{{ instances }}"
+  loop: "{{ instances.split(',') if instances is string else instances }}"
   register: ec2_output
   when: action == "create"
+
 
 - name: "Print the EC2 Instance Output"
   ansible.builtin.debug:
@@ -51,7 +52,7 @@
     zone: "{{ zone_name }}"
     record: "{{ item }}-{{ env }}.{{ zone_name }}" #mongodb-dev.rkak87.online
     type: A
-  loop: "{{ instances }}"
+  loop: "{{ instances.split(',') if instances is string else instances }}"
   when: action == "delete"
 
   # Before deleting the instance, delete the route 53 public ip records using action: delete 
@@ -61,7 +62,7 @@
     zone: "{{ zone_name }}"
     record: "webapp-{{ env }}.{{ zone_name }}" #webapp-dev.rkak87.online
     type: A
-  loop: "{{ instances }}"
+  loop: "{{ instances.split(',') if instances is string else instances }}"
   when: 
   - action == "delete"
   - item == "frontend"
@@ -73,5 +74,5 @@
     wait: false
     name: "{{ item }}-{{ env }}"
     region: "{{ region }}"
-  loop: "{{ instances }}"
+  loop: "{{ instances.split(',') if instances is string else instances }}"
   when: action == "delete"
