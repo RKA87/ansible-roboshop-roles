@@ -1,0 +1,3 @@
+dependencies:
+# each component is dependent on common role
+- role: common
