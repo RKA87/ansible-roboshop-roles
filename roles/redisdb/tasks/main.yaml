@@ -1,0 +1,42 @@
+- name: "Disable RedisDB Module"
+  ansible.builtin.command:
+    cmd: "dnf module disable redis -y"
+  become: true
+
+# Enable Redis:7 repository
+- name: "Enable Redis:7"
+  ansible.builtin.command:
+    cmd: "dnf module enable redis:7 -y"
+  become: true
+
+# Install Redis
+- name: "Install Redis"
+  ansible.builtin.dnf:
+    name: redis    
+    state: present
+  become: true
+
+
+# update the listner address to 0.0.0.0 in etc/redis.conf
+- name: "Update Redis Listner Address"
+  ansible.builtin.replace:
+    regexp: '127.0.0.1'
+    replace: '0.0.0.0'
+    path: /etc/redis/redis.conf
+  become: true
+
+# update protected mode to no in etc/redis.conf
+- name: "Update Redis Protected Mode"
+  ansible.builtin.lineinfile:
+    regexp: 'protected-mode'
+    line: 'protected-mode no'
+    path: /etc/redis/redis.conf
+  become: true
+
+# Enable and Start Redis
+- name: "Enable and Start Redis"
+  ansible.builtin.service:
+    name: redis
+    state: restarted
+    enabled: true
+  become: true
