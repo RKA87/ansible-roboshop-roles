@@ -24,9 +24,9 @@
     name: mongodb-mongosh
     state: present
   
-# - name: "check products loaded"
-#   ansible.builtin.command: mongo --host "{{ MONGODB_HOST }}" --quiet  --eval 'db.getMongo().getDBNames().indexOf("catalogue")'
-#   register: catalogue_output
+- name: "check products loaded"
+  ansible.builtin.command: mongo --host "{{ MONGODB_HOST }}" --quiet  --eval 'db.getMongo().getDBNames().indexOf("catalogue")'
+  register: catalogue_output
 
 - name: "Load products data"
   ansible.builtin.command: mongo --host "{{ MONGODB_HOST }}" </app/db/master-data.js
