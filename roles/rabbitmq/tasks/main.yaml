@@ -1,0 +1,28 @@
+- name: "Copy the {{ component }} repo file"
+  ansible.builtin.copy:
+    src: "rabbitmq.repo"
+    dest: "/etc/yum.repos.d/rabbitmq.repo"
+
+- name: "Install {{ component }}"
+  ansible.builtin.dnf:
+    name: "rabbitmq-server"
+    state: present
+  
+- name: "Start and Enable {{ component }} service"
+  ansible.builtin.systemd:
+    name: "rabbitmq-server"
+    state: started
+    enabled: true
+
+# Add user with default username and password for the application
+- name: "Adding user for Roboshop project in {{ component }} instance"
+  community.rabbitmq.rabbitmq_user:
+    user: roboshop
+    password: roboshop123
+    permissions:
+      - vhost: /
+        configure_priv: .*
+        write: .*
+        read: .*
+    state: present
+  ignore_errors: true

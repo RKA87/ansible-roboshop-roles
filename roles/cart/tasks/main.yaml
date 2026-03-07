@@ -1,0 +1,19 @@
+- name: "Application setup for {{ component }}"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "app-setup.yaml"
+
+- name: "Node JS setup for {{ component }}"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "nodejs-setup.yaml"
+
+- name: "Systemd Setup for {{ component }}"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "systemd-setup.yaml"
+
+- name: "Service Restart for {{ component }}"
+  ansible.builtin.systemd:
+    name: "{{ component }}"
+    state: restarted

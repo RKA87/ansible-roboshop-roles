@@ -1,0 +1,45 @@
+- name: "Application setup for {{ component }}"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "app-setup.yaml"
+  
+- name: "Java(Maven) and its dependencies Setup for {{ component }}"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "java-setup.yaml"
+  
+- name: "Systemd Setup for {{ component }}"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "systemd-setup.yaml"
+
+# For using community.mysql.mysql_db module, we need to install its dependencies
+
+- name: "Install MySQLDB Python dependencies"
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    exectutable: pip3.9
+    state: present
+  loop:
+    - PyMySQL
+    - cryptography
+
+# Now load schema into MySQL database using community.mysql.mysql_db module
+- name: "Load Schema into Databases"
+  community.mysql.mysql_db:
+    state: import
+    name: all
+    login_host: "{{ MYSQL_HOST }}"
+    login_user: root
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    target: "{{ item }}"
+  loop:
+    - /app/db/schema.sql
+    - /app/db/app-user.sql 
+    - /app/db/master-data.sql
+
+- name: "Start and Enable {{ component }} Service"
+  ansible.builtin.systemd:
+    name: "{{ component }}"
+    state: restarted
+    enabled: true

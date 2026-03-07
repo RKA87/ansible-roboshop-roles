@@ -1,0 +1,18 @@
+- name: "Install Java(Maven) and its dependencies"
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop:
+  - maven
+  - mysql
+
+- name: "Install Dependencies"
+  ansible.builtin.command: mvn clean package
+  args:
+    chdir: /app
+
+- name: "Rename JAR file to {{ component }}.jar"
+  ansible.builtin.command: mv target/shipping-1.0.jar {{ component }}.jar
+  args:
+    chdir: /app

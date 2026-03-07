@@ -1,0 +1,54 @@
+- name: "Disable Nginx for Frontend"
+  ansible.builtin.command: "dnf module disable nginx -y"
+
+- name: "Enable Nginx:24 for Frontend"
+  ansible.builtin.command: "dnf module enable nginx:1.24 -y"
+
+- name: "Install Nginx for Frontend"
+  ansible.builtin.dnf:
+    name: nginx
+    state: present
+
+#Remove the nginx default configuration file
+- name: "Remove default Nginx configuration for Frontend"
+  ansible.builtin.file:
+    path: /usr/share/nginx/html/
+    state: absent
+
+# Create the html directory for nginx
+- name: "Create html directory for Nginx for Frontend"
+  ansible.builtin.file:
+    path: /usr/share/nginx/html/
+    state: directory
+
+# download the frontend content from github
+- name: "Download Frontend content from GitHub"
+  ansible.builtin.get_url:
+    url: "https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip"
+    dest: /tmp/frontend.zip
+
+- name: "Unzip Frontend content for Frontend"
+  ansible.builtin.unarchive:
+    src: /tmp/frontend.zip
+    dest: /usr/share/nginx/html/
+    remote_src: yes
+
+# Remove defaulf nginx configuration file
+- name: "Remove default Nginx configuration for Frontend"
+  ansible.builtin.file:
+    state: absent
+    path: /etc/nginx/nginx.conf
+
+# Copy the custom nginx configuration file
+- name: "Copy custom Nginx configuration for Frontend"
+  ansible.builtin.copy:
+    src: files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+# Restart Niginx service
+- name: "Restart Nginx service for Frontend"
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
+    enabled: true
