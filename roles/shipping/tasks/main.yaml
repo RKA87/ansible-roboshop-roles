@@ -18,7 +18,7 @@
 - name: "Install MySQLDB Python dependencies"
   ansible.builtin.pip:
     name: "{{ item }}"
-    exectutable: pip3.9
+    executable: pip3.9
     state: present
   loop:
     - PyMySQL
