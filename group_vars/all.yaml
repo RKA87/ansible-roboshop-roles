@@ -15,7 +15,7 @@ common_tags:
 
 ansible_user: ec2-user
 ansible_password: DevOps321
-mysql_root_password: RoboShop@1
+MYSQL_ROOT_PASSWORD: RoboShop@1
 MONGODB_HOST: mongodb-dev.rkak87.online
 CATALOGUE_HOST: catalogue-dev.rkak87.online
 REDIS_HOST: redisdb-dev.rkak87.online
