@@ -22,7 +22,7 @@
     permissions:
       - vhost: /
         configure_priv: .*
-        write: .*
-        read: .*
+        write_priv: .*
+        read_priv: .*
     state: present
   ignore_errors: true
