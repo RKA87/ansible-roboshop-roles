@@ -12,8 +12,3 @@
   ansible.builtin.import_role:
     name: "common"
     tasks_from: "systemd-setup.yaml"
-
-- name: "Service Restart for {{ component }}"
-  ansible.builtin.systemd:
-    name: "{{ component }}"
-    state: restarted
