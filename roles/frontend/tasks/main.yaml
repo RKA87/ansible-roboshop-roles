@@ -48,7 +48,7 @@
 
 # Restart Niginx service
 - name: "Restart Nginx service for Frontend"
-  ansible.builtin.systemd:
+  ansible.builtin.service:
     name: nginx
     state: restarted
     enabled: true
