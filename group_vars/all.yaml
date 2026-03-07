@@ -4,8 +4,8 @@ image_id: "ami-0220d79f3f480ecf5"
 instance_type: "t3.micro"
 env: "dev"
 instances:
-  - "mongodb"
-  - "catalogue"
+  - "dispatch"
+#  - "catalogue"
 zone_name: "rkak87.online"
 action: "create"
 common_tags:
