@@ -8,7 +8,7 @@ instances:
 #  - "catalogue"
 zone_name: "rkak87.online"
 action: "create"
-common_tags:
+common_tags: # map or dictionary format
   Owner: ansible
   Project: roboshop
   Environment: "{{ env }}"
